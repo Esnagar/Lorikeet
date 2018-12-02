@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.RegistroController">
+    <children>
+        <TextField layoutX="411.0" layoutY="116.0" prefHeight="31.0" prefWidth="159.0">
+         <cursor>
+            <Cursor fx:constant="TEXT" />
+         </cursor></TextField>
+        <Label layoutX="321.0" layoutY="121.0" text="Nickname" />
+        <Label layoutX="321.0" layoutY="174.0" text="Contraseña" />
+        <Button fx:id="registro" layoutX="397.0" layoutY="301.0" mnemonicParsing="false" onAction="#chat" text="Registrarse" />
+        <Hyperlink fx:id="login" layoutX="399.0" layoutY="339.0" onAction="#login" text="Inicia sesión" />
+        <Separator layoutX="274.0" orientation="VERTICAL" prefHeight="400.0" prefWidth="35.0" />
+        <Button layoutX="68.0" layoutY="307.0" mnemonicParsing="false" text="Ayuda" />
+        <Button layoutX="168.0" layoutY="308.0" mnemonicParsing="false" text="Acerca" />
+        <StackPane layoutX="82.0" layoutY="-159.0" prefHeight="150.0" prefWidth="200.0" />
+        <Label layoutX="354.0" layoutY="48.0" text="Crea tu cuenta">
+            <font>
+                <Font size="28.0" />
+            </font>
+        </Label>
+        <PasswordField layoutX="411.0" layoutY="225.0" prefHeight="31.0" prefWidth="159.0">
+         <cursor>
+            <Cursor fx:constant="TEXT" />
+         </cursor></PasswordField>
+        <Label layoutX="321.0" layoutY="221.0" prefHeight="40.0" prefWidth="79.0" text="Confirmar &#10;contraseña" />
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="75.0" layoutY="109.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../LorikeetVector.png" />
+         </image>
+      </ImageView>
+      <PasswordField layoutX="411.0" layoutY="169.0" prefHeight="31.0" prefWidth="159.0">
+         <cursor>
+            <Cursor fx:constant="TEXT" />
+         </cursor></PasswordField>
+    </children>
+</Pane>
