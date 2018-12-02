@@ -98,9 +98,9 @@ public class Client {
     */
     private void display(String msg) {
         if (cg == null)
-        System.out.println(msg);      // println in console mode
-        else
-            cg.append(msg + "\n");        // append to the ChatController JTextArea (or whatever)
+            System.out.println(msg);      // println in console mode
+        //else
+            //cg.append(msg + "\n");        // append to the ChatController JTextArea (or whatever)
     }
 
     /*
@@ -298,7 +298,7 @@ public class Client {
                                     System.out.print("> ");
                                 }
                             } else {
-                                cg.append(msg);
+                                //cg.append(msg);
                             }
                         }
                         if(aux.getType()==3){

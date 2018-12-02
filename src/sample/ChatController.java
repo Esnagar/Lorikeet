@@ -1,16 +1,26 @@
 package sample;
 
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class ChatController {
+public class ChatController implements Initializable {
+
+    public TextArea mensajeChat;
+    public TextField output;
+    public ImageView index;
 
     public void login (javafx.event.ActionEvent actionEvent) throws IOException {
         Parent loginParent = FXMLLoader.load(getClass().getResource("login.fxml"));
@@ -23,11 +33,15 @@ public class ChatController {
     // will first hold "Username:", later on "Enter message"
     private Label label;
     // to hold the Username and later on the messages
+    @FXML
     private TextField tf;
     // to hold the server address an the port number
     private TextField tfServer, tfPort;
     // to Logout and get the list of the users
-    private Button login, logout, whoIsIn;
+    @FXML
+    private Button login, logout, whoIsIn, enviar;
+
+    private Pane pane;
     // for the chat room
     private TextArea ta;
     // if it is for connection
@@ -46,15 +60,16 @@ public class ChatController {
         //super("Chat Client");
         this.defaultPort = port;
         this.defaultHost = host;
-
     }
 
     // called by the Client to append text in the TextArea
-    void append(String str) {
-        System.out.println("HOLA ^^");
+    public void append(ActionEvent actionEvent) throws IOException {
+        output.setText(mensajeChat.getText());
         //ta.append(str);
         //ta.setCaretPosition(ta.getText().length() - 1);
     }
+
+
     // called by the GUI is the connection failed
     // we reset our buttons, label, textfield
     void connectionFailed() {
@@ -116,5 +131,10 @@ public class ChatController {
             connected = true;
             //tf.addActionListener(this);
         }
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
     }
 }
