@@ -15,13 +15,22 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class ChatController implements Initializable {
+import sample.Client;
 
+import static sample.ChatMessage.CIPHERMESSAGE;
+import static sample.Client.encriptarMensaje;
+import static sample.Client.encriptarMensajeBytes;
+import static sample.Client.getClaveAES;
+
+public class ChatController implements Initializable {
+    public Client client;
     public TextArea mensajeChat;
     public ImageView index;
     public Pane fondoChat;
@@ -29,7 +38,7 @@ public class ChatController implements Initializable {
     public Button enviar;
     public ArrayList<TextArea> mensajes = new ArrayList<TextArea>();
 
-    public void login (javafx.event.ActionEvent actionEvent) throws IOException {
+    public void login(javafx.event.ActionEvent actionEvent) throws IOException {
         Parent loginParent = FXMLLoader.load(getClass().getResource("login.fxml"));
         Scene loginScene = new Scene(loginParent, 600, 400);
         Stage window = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
@@ -53,57 +62,106 @@ public class ChatController implements Initializable {
     // if it is for connection
     private boolean connected;
     // the Client object
-    private Client client;
     // the default port number
     private int defaultPort;
     private String defaultHost;
 
-    public ChatController() { super(); };
+    public ChatController() {
+        super();
+    }
 
     // Constructor connection receiving a socket number
-    public ChatController(String host, int port) {
-        System.out.println("Se crea");
+    public ChatController(String host, int port, String user) {
         //super("Chat Client");
         this.defaultPort = port;
         this.defaultHost = host;
+
+        client = new Client(host, port, user, this);
+        client.start();
+        System.out.println(client);
     }
 
     // called by the Client to append text in the TextArea
-    public void append(ActionEvent actionEvent) throws IOException {
+    public void enviar(ActionEvent actionEvent) throws IOException {
         if (!mensajeChat.getText().isEmpty()) {
-            TextArea nuevoMensaje = new TextArea(mensajeChat.getText());
-
-            nuevoMensaje.setPrefWidth(255);
-            nuevoMensaje.setPrefHeight(30);
-            nuevoMensaje.maxWidth(255);
-            nuevoMensaje.setDisable(false);
-            nuevoMensaje.setWrapText(true);
-
-            ScrollBar scrollBarv = (ScrollBar)mensajeChat.lookup(".scroll-bar:vertical");
-            scrollBarv.setDisable(true);
-
-            int y = 230;
-            int x = 200;
-
-            //Su posición inicial
-            nuevoMensaje.setTranslateX(x);
-            nuevoMensaje.setTranslateY(y);
-
-            mensajes.add(0, nuevoMensaje); //Es el mensaje más reciente
-
-            zonaMensajes.getChildren().clear(); //Borramos all para actualizar
-
-            for (TextArea mensaje : mensajes) {
-                mensaje.setTranslateY(y); //Desplazamos los mensajes hacia arriba
-                zonaMensajes.getChildren().add(mensaje);
-                y -= 60;
-            }
-
-            mensajeChat.clear();
-
+            append(mensajeChat.getText());
         }
         //ta.append(str);
         //ta.setCaretPosition(ta.getText().length() - 1);
+    }
+
+    public void append(String msg) {
+        TextArea nuevoMensaje = new TextArea(msg);
+        comprobarMensaje(msg);
+
+        nuevoMensaje.setPrefWidth(255);
+        nuevoMensaje.setPrefHeight(30);
+        nuevoMensaje.maxWidth(255);
+        nuevoMensaje.setDisable(false);
+        nuevoMensaje.setWrapText(true);
+
+        ScrollBar scrollBarv = (ScrollBar) mensajeChat.lookup(".scroll-bar:vertical");
+        scrollBarv.setDisable(true);
+
+        int y = 230;
+        int x = 200;
+
+        //Su posición inicial
+        nuevoMensaje.setTranslateX(x);
+        nuevoMensaje.setTranslateY(y);
+
+        mensajes.add(0, nuevoMensaje); //Es el mensaje más reciente
+
+        zonaMensajes.getChildren().clear(); //Borramos all para actualizar
+
+        for (TextArea mensaje : mensajes) {
+            mensaje.setTranslateY(y); //Desplazamos los mensajes hacia arriba
+            zonaMensajes.getChildren().add(mensaje);
+            y -= 60;
+        }
+
+        mensajeChat.clear();
+
+    }
+
+
+    public void comprobarMensaje(String msg) {
+        if (msg.equalsIgnoreCase("LOGOUT")) {
+            client.sendMessage(new ChatMessage(ChatMessage.LOGOUT, ""));
+        }
+
+        else if (msg.equalsIgnoreCase("WHOISIN")) {
+            client.sendMessage(new ChatMessage(ChatMessage.WHOISIN, ""));
+
+        } else if (msg.contains("FILE")) {
+            String msg2 = msg.substring(6, msg.length());
+            msg2 = msg2.substring(msg2.lastIndexOf("\\"));
+            msg2 = encriptarMensaje(msg2);
+            ChatMessage cosa = new ChatMessage(ChatMessage.FILE, msg2);
+            String archivo = msg.substring(6, msg.length());
+            File f = new File(archivo);
+            byte[] content = null;
+            try {
+                content = Files.readAllBytes(f.toPath());
+            } catch (IOException ex) {
+                System.out.println("Problema con el archivo");
+            }
+            if (getClaveAES() != null) {
+                content = encriptarMensajeBytes(content);
+            }
+            cosa.setContenido(content);
+            client.sendMessage(cosa);
+
+        } else {
+            if (getClaveAES() != null) {
+                msg = encriptarMensaje("Esther" + ": " + msg);
+            }
+            if (client == null) {
+                System.out.println("problemitas");
+            }
+
+            client.sendMessage(new ChatMessage(CIPHERMESSAGE, msg));
+        }
     }
 
     // called by the GUI is the connection failed
@@ -115,66 +173,12 @@ public class ChatController implements Initializable {
         connected = false;
     }
 
-    /*
-     * Button or JTextField clicked
-     */
-    public void actionPerformed(ActionEvent e) {
-        Object o = e.getSource();
-        // if it is the Logout button
-        if(o == logout) {
-            client.sendMessage(new ChatMessage(ChatMessage.LOGOUT, ""));
-            return;
-        }
-
-        // ok it is coming from the JTextField
-        if(connected) {
-            // just have to send the message
-            client.sendMessage(new ChatMessage(ChatMessage.MESSAGE, tf.getText()));
-            tf.setText("");
-            return;
-        }
-
-
-        if(o == login) {
-            // ok it is a connection request
-            String username = tf.getText().trim();
-            // empty username ignore it
-            if(username.length() == 0)
-                return;
-            // empty serverAddress ignore it
-            String server = tfServer.getText().trim();
-            if(server.length() == 0)
-                return;
-            // empty or invalid port numer, ignore it
-            String portNumber = tfPort.getText().trim();
-            if(portNumber.length() == 0)
-                return;
-            int port = 0;
-            try {
-                port = Integer.parseInt(portNumber);
-            }
-            catch(Exception en) {
-                return;   // nothing I can do if port number is not valid
-            }
-/*
-            // try creating a new Client with GUI
-            client = new Client(server, port, username, this);
-            // test if we can start the Client
-            if(!client.start())
-                return;
-            tf.setText("");
-            label.setText("Enter your message below");
-            connected = true;
-            //tf.addActionListener(this);*/
-        }
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
     }
 
-    public void enviar(KeyEvent keyEvent) {
+    public void enviarIntro(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             enviar.fire();
         }

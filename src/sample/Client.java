@@ -22,7 +22,7 @@ public class Client {
     private static PrivateKey clavePrivada;
     private String claveAESEncriptada;
     // if I use a GUI or not
-    private ClientGUI cg;
+    private ChatController cc;
 
     // the server, the port and the username
     private String server, username;
@@ -37,19 +37,20 @@ public class Client {
     Client(String server, int port, String username) {
         // which calls the common constructor with the GUI set to null
         this(server, port, username, null);
+        System.out.println("Usuario: " + username);
     }
 
     /*
      * Constructor call when used from a GUI
      * in console mode the ClienGUI parameter is null
      */
-    Client(String server, int port, String username, ClientGUI cg) {
+    Client(String server, int port, String username, ChatController cc) {
         this.server = server;
         this.port = port;
         this.username = username;
         // save if we are in GUI mode or not
-        cg = null;
-        this.cg = cg;
+        //cc = null;
+        this.cc = cc;
     }
 
     /*
@@ -67,7 +68,7 @@ public class Client {
         }
 
         String msg = "Connection accepted " + socket.getInetAddress() + ":" + socket.getPort();
-        display(msg);
+        //display(msg);
 
         /* Creating both Data Stream */
         try {
@@ -97,10 +98,11 @@ public class Client {
      * To send a message to the console or the GUI
      */
     private void display(String msg) {
-        if (cg == null)
+        if (cc == null)
             System.out.println(msg);      // println in console mode
         else
-            cg.append(msg + "\n");        // append to the ClientGUI JTextArea (or whatever)
+            cc.append(msg);        // append to the ClientGUI JTextArea (or whatever)
+    //cc.append(msg + "\n");
     }
 
     /*
@@ -133,8 +135,8 @@ public class Client {
         } // not much else I can do
 
         // inform the GUI
-        if (cg != null)
-            cg.connectionFailed();
+        if (cc != null)
+            cc.connectionFailed();
 
     }
 
@@ -259,12 +261,13 @@ public class Client {
                             String msg=aux.getMessage();
                             msg=desencriptarMensaje(msg);
                             System.out.println(msg);
+                            display(msg);
                         }
                     }
                     if(aux.getType()==1 || aux.getType()==4){
                         String msg=aux.getMessage();
                         // if console mode print the message and add back the prompt
-                        if (cg == null) {
+                        if (cc == null) {
                             if(!msg.contains("~0~") && !msg.contains("~1~")){
                                 System.out.println(msg);
                             }
@@ -298,7 +301,7 @@ public class Client {
                                 System.out.print("> ");
                             }
                         } else {
-                            cg.append(msg);
+                            cc.append(msg);
                         }
                     }
                     if(aux.getType()==3){
@@ -315,8 +318,8 @@ public class Client {
                     }
                 } catch (IOException e) {
                     display("Server has close the connection: " + e);
-                    if (cg != null)
-                        cg.connectionFailed();
+                    if (cc != null)
+                        cc.connectionFailed();
                     break;
                 }
                 // can't happen with a String object but need the catch anyhow
@@ -479,5 +482,13 @@ public class Client {
         }
 
         return textoPlano;
+    }
+
+    public static SecretKey getClaveAES() {
+        return claveAES;
+    }
+
+    public static void setClaveAES(SecretKey claveAES) {
+        Client.claveAES = claveAES;
     }
 }

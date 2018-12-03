@@ -13,6 +13,8 @@ import java.io.IOException;
 
 public class RegistroLoginController {
 
+    public TextField nickname;
+
     public void login (javafx.event.ActionEvent actionEvent) throws IOException {
         Parent loginParent = FXMLLoader.load(getClass().getResource("login.fxml"));
         Scene loginScene = new Scene(loginParent, 600, 400);
@@ -31,8 +33,7 @@ public class RegistroLoginController {
 
     public void chat (javafx.event.ActionEvent actionEvent) throws IOException {
         // to start the whole thing the server
-        ChatController cc = new ChatController("localhost", 1500);
-        Client cliente = new Client("localhost", 1500, "Esther");
+        ChatController cc = new ChatController("localhost", 1500, nickname.getText());
 
         Parent loginParent = FXMLLoader.load(getClass().getResource("chat.fxml"));
         Scene loginScene = new Scene(loginParent, 600, 400);
