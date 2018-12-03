@@ -8,19 +8,26 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class ChatController implements Initializable {
 
     public TextArea mensajeChat;
-    public TextField output;
     public ImageView index;
+    public Pane fondoChat;
+    public AnchorPane zonaMensajes;
+    public Button enviar;
+    public ArrayList<TextArea> mensajes = new ArrayList<TextArea>();
 
     public void login (javafx.event.ActionEvent actionEvent) throws IOException {
         Parent loginParent = FXMLLoader.load(getClass().getResource("login.fxml"));
@@ -39,9 +46,8 @@ public class ChatController implements Initializable {
     private TextField tfServer, tfPort;
     // to Logout and get the list of the users
     @FXML
-    private Button login, logout, whoIsIn, enviar;
+    private Button login, logout, whoIsIn;
 
-    private Pane pane;
     // for the chat room
     private TextArea ta;
     // if it is for connection
@@ -64,11 +70,41 @@ public class ChatController implements Initializable {
 
     // called by the Client to append text in the TextArea
     public void append(ActionEvent actionEvent) throws IOException {
-        output.setText(mensajeChat.getText());
+        if (!mensajeChat.getText().isEmpty()) {
+            TextArea nuevoMensaje = new TextArea(mensajeChat.getText());
+
+            nuevoMensaje.setPrefWidth(255);
+            nuevoMensaje.setPrefHeight(30);
+            nuevoMensaje.maxWidth(255);
+            nuevoMensaje.setDisable(false);
+            nuevoMensaje.setWrapText(true);
+
+            ScrollBar scrollBarv = (ScrollBar)mensajeChat.lookup(".scroll-bar:vertical");
+            scrollBarv.setDisable(true);
+
+            int y = 230;
+            int x = 200;
+
+            //Su posición inicial
+            nuevoMensaje.setTranslateX(x);
+            nuevoMensaje.setTranslateY(y);
+
+            mensajes.add(0, nuevoMensaje); //Es el mensaje más reciente
+
+            zonaMensajes.getChildren().clear(); //Borramos all para actualizar
+
+            for (TextArea mensaje : mensajes) {
+                mensaje.setTranslateY(y); //Desplazamos los mensajes hacia arriba
+                zonaMensajes.getChildren().add(mensaje);
+                y -= 60;
+            }
+
+            mensajeChat.clear();
+
+        }
         //ta.append(str);
         //ta.setCaretPosition(ta.getText().length() - 1);
     }
-
 
     // called by the GUI is the connection failed
     // we reset our buttons, label, textfield
@@ -120,7 +156,7 @@ public class ChatController implements Initializable {
             catch(Exception en) {
                 return;   // nothing I can do if port number is not valid
             }
-
+/*
             // try creating a new Client with GUI
             client = new Client(server, port, username, this);
             // test if we can start the Client
@@ -129,12 +165,18 @@ public class ChatController implements Initializable {
             tf.setText("");
             label.setText("Enter your message below");
             connected = true;
-            //tf.addActionListener(this);
+            //tf.addActionListener(this);*/
         }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+    }
+
+    public void enviar(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            enviar.fire();
+        }
     }
 }
