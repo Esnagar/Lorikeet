@@ -7,7 +7,7 @@ import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
 import java.nio.file.*;
-
+import sample.ChatMessage;
 
 /* The Client that can be run both as a console or a GUI */
 public class Client {
@@ -74,6 +74,8 @@ public class Client {
         try {
             sInput = new ObjectInputStream(socket.getInputStream());
             sOutput = new ObjectOutputStream(socket.getOutputStream());
+            System.out.println("sInput: " + sInput);
+            System.out.println("sOutput: " + sOutput);
         } catch (IOException eIO) {
             display("Exception creating new Input/output Streams: " + eIO);
             return false;
@@ -256,6 +258,7 @@ public class Client {
                 try {
 
                     ChatMessage aux = (ChatMessage) sInput.readObject();
+
                     if(aux.getType()==5){
                         if(claveAES!=null){
                             String msg=aux.getMessage();
@@ -267,7 +270,7 @@ public class Client {
                     if(aux.getType()==1 || aux.getType()==4){
                         String msg=aux.getMessage();
                         // if console mode print the message and add back the prompt
-                        if (cc == null) {
+                        if (cc != null) {
                             if(!msg.contains("~0~") && !msg.contains("~1~")){
                                 System.out.println(msg);
                             }
@@ -324,6 +327,7 @@ public class Client {
                 }
                 // can't happen with a String object but need the catch anyhow
                 catch (ClassNotFoundException e2) {
+                    System.out.println(e2);
                 }
             }
         }

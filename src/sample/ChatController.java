@@ -31,6 +31,8 @@ import static sample.Client.getClaveAES;
 
 public class ChatController implements Initializable {
     public Client client;
+
+    @FXML
     public TextArea mensajeChat;
     public ImageView index;
     public Pane fondoChat;
@@ -76,9 +78,9 @@ public class ChatController implements Initializable {
         this.defaultPort = port;
         this.defaultHost = host;
 
-        client = new Client(host, port, user, this);
-        client.start();
-        System.out.println(client);
+        //client = new Client(host, port, user, this);
+        //client.start();
+        //System.out.println(client);
     }
 
     // called by the Client to append text in the TextArea
@@ -126,6 +128,8 @@ public class ChatController implements Initializable {
 
 
     public void comprobarMensaje(String msg) {
+        asignarCliente();
+
         if (msg.equalsIgnoreCase("LOGOUT")) {
             client.sendMessage(new ChatMessage(ChatMessage.LOGOUT, ""));
         }
@@ -182,5 +186,10 @@ public class ChatController implements Initializable {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             enviar.fire();
         }
+    }
+
+    public void asignarCliente() {
+        this.client = RegistroLoginController.client;
+        System.out.println("Cliente: " + client);
     }
 }
