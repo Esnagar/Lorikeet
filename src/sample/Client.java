@@ -103,7 +103,7 @@ public class Client {
         if (cc == null)
             System.out.println(msg);      // println in console mode
         else
-            cc.append(msg);        // append to the ClientGUI JTextArea (or whatever)
+            cc.appendisplay(msg);        // append to the ClientGUI JTextArea (or whatever)
     //cc.append(msg + "\n");
     }
 

@@ -1,5 +1,6 @@
 package sample;
 //hola
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -31,14 +32,22 @@ import static sample.Client.getClaveAES;
 
 public class ChatController implements Initializable {
     public Client client;
+    public boolean loaded = false;
+    public boolean preparado = false;
 
     @FXML
     public TextArea mensajeChat;
     public ImageView index;
+
+    @FXML
     public Pane fondoChat;
+
+    @FXML
     public AnchorPane zonaMensajes;
     public Button enviar;
     public ArrayList<TextArea> mensajes = new ArrayList<TextArea>();
+    public ScrollBar scrollBarra;
+
 
     public void login(javafx.event.ActionEvent actionEvent) throws IOException {
         Parent loginParent = FXMLLoader.load(getClass().getResource("login.fxml"));
@@ -48,23 +57,14 @@ public class ChatController implements Initializable {
         window.show();
     }
 
-    // will first hold "Username:", later on "Enter message"
     private Label label;
-    // to hold the Username and later on the messages
     @FXML
     private TextField tf;
-    // to hold the server address an the port number
     private TextField tfServer, tfPort;
-    // to Logout and get the list of the users
     @FXML
     private Button login, logout, whoIsIn;
-
-    // for the chat room
     private TextArea ta;
-    // if it is for connection
     private boolean connected;
-    // the Client object
-    // the default port number
     private int defaultPort;
     private String defaultHost;
 
@@ -77,10 +77,6 @@ public class ChatController implements Initializable {
         //super("Chat Client");
         this.defaultPort = port;
         this.defaultHost = host;
-
-        //client = new Client(host, port, user, this);
-        //client.start();
-        //System.out.println(client);
     }
 
     // called by the Client to append text in the TextArea
@@ -93,36 +89,82 @@ public class ChatController implements Initializable {
     }
 
     public void append(String msg) {
-        TextArea nuevoMensaje = new TextArea(msg);
-        comprobarMensaje(msg);
-
-        nuevoMensaje.setPrefWidth(255);
-        nuevoMensaje.setPrefHeight(30);
-        nuevoMensaje.maxWidth(255);
-        nuevoMensaje.setDisable(false);
-        nuevoMensaje.setWrapText(true);
-
-        ScrollBar scrollBarv = (ScrollBar) mensajeChat.lookup(".scroll-bar:vertical");
-        scrollBarv.setDisable(true);
-
-        int y = 230;
-        int x = 200;
-
-        //Su posición inicial
-        nuevoMensaje.setTranslateX(x);
-        nuevoMensaje.setTranslateY(y);
-
-        mensajes.add(0, nuevoMensaje); //Es el mensaje más reciente
-
-        zonaMensajes.getChildren().clear(); //Borramos all para actualizar
-
-        for (TextArea mensaje : mensajes) {
-            mensaje.setTranslateY(y); //Desplazamos los mensajes hacia arriba
-            zonaMensajes.getChildren().add(mensaje);
-            y -= 60;
+        while (!preparado) {
+            if(loaded)
+                preparado = true;
         }
 
-        mensajeChat.clear();
+        if (loaded) {
+            preparado = true;
+
+            TextArea nuevoMensaje = new TextArea(msg);
+            comprobarMensaje(msg);
+
+            nuevoMensaje.setPrefWidth(255);
+            nuevoMensaje.setPrefHeight(30);
+            nuevoMensaje.maxWidth(255);
+            nuevoMensaje.setDisable(false);
+            nuevoMensaje.setWrapText(true);
+            scrollBarra.setDisable(true);
+
+            int y = 230;
+            int x = 200;
+
+            //Su posición inicial
+            nuevoMensaje.setTranslateX(x);
+            nuevoMensaje.setTranslateY(y);
+
+            mensajes.add(0, nuevoMensaje); //Es el mensaje más reciente
+
+            zonaMensajes.getChildren().clear(); //Borramos all para actualizar
+
+            for (TextArea mensaje : mensajes) {
+                mensaje.setTranslateY(y); //Desplazamos los mensajes hacia arriba
+                zonaMensajes.getChildren().add(mensaje);
+                y -= 60;
+            }
+
+            mensajeChat.clear();
+        }
+
+    }
+
+    public void appendisplay(String msg) {
+        while (!preparado) {
+            if(loaded)
+                preparado = true;
+        }
+
+        if (loaded) {
+            preparado = true;
+
+            TextArea nuevoMensaje = new TextArea(msg);
+            nuevoMensaje.setPrefWidth(255);
+            nuevoMensaje.setPrefHeight(30);
+            nuevoMensaje.maxWidth(255);
+            nuevoMensaje.setDisable(false);
+            nuevoMensaje.setWrapText(true);
+            scrollBarra.setDisable(true);
+
+            int y = 230;
+            int x = 200;
+
+            //Su posición inicial
+            nuevoMensaje.setTranslateX(x);
+            nuevoMensaje.setTranslateY(y);
+
+            mensajes.add(0, nuevoMensaje); //Es el mensaje más reciente
+
+            zonaMensajes.getChildren().clear(); //Borramos all para actualizar
+
+            for (TextArea mensaje : mensajes) {
+                mensaje.setTranslateY(y); //Desplazamos los mensajes hacia arriba
+                zonaMensajes.getChildren().add(mensaje);
+                y -= 60;
+            }
+
+            mensajeChat.clear();
+        }
 
     }
 
@@ -132,9 +174,7 @@ public class ChatController implements Initializable {
 
         if (msg.equalsIgnoreCase("LOGOUT")) {
             client.sendMessage(new ChatMessage(ChatMessage.LOGOUT, ""));
-        }
-
-        else if (msg.equalsIgnoreCase("WHOISIN")) {
+        } else if (msg.equalsIgnoreCase("WHOISIN")) {
             client.sendMessage(new ChatMessage(ChatMessage.WHOISIN, ""));
 
         } else if (msg.contains("FILE")) {
@@ -177,10 +217,6 @@ public class ChatController implements Initializable {
         connected = false;
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
-    }
 
     public void enviarIntro(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER) {
@@ -191,5 +227,11 @@ public class ChatController implements Initializable {
     public void asignarCliente() {
         this.client = RegistroLoginController.client;
         System.out.println("Cliente: " + client);
+    }
+
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        loaded = true;
     }
 }

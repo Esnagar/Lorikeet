@@ -32,7 +32,6 @@ public class RegistroLoginController {
 
     public TextField nickname;
     public static Client client;
-    public static TextArea mensajeChat;
 
     public void login(javafx.event.ActionEvent actionEvent) throws IOException {
         Parent loginParent = FXMLLoader.load(getClass().getResource("login.fxml"));
@@ -52,6 +51,11 @@ public class RegistroLoginController {
 
     public void chat(javafx.event.ActionEvent actionEvent) throws IOException {
         // to start the whole thing the server
+        ChatController cc = new ChatController("localhost", 1500, nickname.getText());
+        client = new Client("localhost", 1500, nickname.getText(), cc);
+        client.start();
+        cc.asignarCliente();
+
 
         Parent loginParent = FXMLLoader.load(getClass().getResource("chat.fxml"));
         Scene loginScene = new Scene(loginParent, 600, 400);
@@ -59,10 +63,7 @@ public class RegistroLoginController {
         window.setScene(loginScene);
         window.show();
 
-        ChatController cc = new ChatController("localhost", 1500, nickname.getText());
-        client = new Client("localhost", 1500, nickname.getText(), cc);
-        client.start();
-        cc.asignarCliente();
+
         //cc.setClient(client);
         //commit suicide
     }
