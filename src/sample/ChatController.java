@@ -92,6 +92,39 @@ public class ChatController implements Initializable {
         //ta.setCaretPosition(ta.getText().length() - 1);
     }
 
+    public void appendisplay(String msg) {
+        TextArea nuevoMensaje = new TextArea(msg);
+
+        nuevoMensaje.setPrefWidth(255);
+        nuevoMensaje.setPrefHeight(30);
+        nuevoMensaje.maxWidth(255);
+        nuevoMensaje.setDisable(false);
+        nuevoMensaje.setWrapText(true);
+
+        ScrollBar scrollBarv = (ScrollBar) mensajeChat.lookup(".scroll-bar:vertical");
+        scrollBarv.setDisable(true);
+
+        int y = 230;
+        int x = 200;
+
+        //Su posición inicial
+        nuevoMensaje.setTranslateX(x);
+        nuevoMensaje.setTranslateY(y);
+
+        mensajes.add(0, nuevoMensaje); //Es el mensaje más reciente
+
+        zonaMensajes.getChildren().clear(); //Borramos all para actualizar
+
+        for (TextArea mensaje : mensajes) {
+            mensaje.setTranslateY(y); //Desplazamos los mensajes hacia arriba
+            zonaMensajes.getChildren().add(mensaje);
+            y -= 60;
+        }
+
+        mensajeChat.clear();
+
+    }
+
     public void append(String msg) {
         TextArea nuevoMensaje = new TextArea(msg);
         comprobarMensaje(msg);
