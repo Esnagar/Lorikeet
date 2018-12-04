@@ -1,4 +1,5 @@
 package sample;
+//hola
 
 import javafx.embed.swing.JFXPanel;
 import javafx.fxml.FXML;
@@ -22,7 +23,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-
 import static sample.ChatMessage.CIPHERMESSAGE;
 import static sample.Client.encriptarMensaje;
 import static sample.Client.encriptarMensajeBytes;
