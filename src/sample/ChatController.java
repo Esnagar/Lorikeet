@@ -1,6 +1,7 @@
 package sample;
 //holaa
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -77,6 +78,8 @@ public class ChatController implements Initializable {
         //super("Chat Client");
         this.defaultPort = port;
         this.defaultHost = host;
+
+
     }
 
     // called by the Client to append text in the TextArea
@@ -125,19 +128,26 @@ public class ChatController implements Initializable {
             }
 
             mensajeChat.clear();
+            client.zonaMensajes=zonaMensajes;
+            client.mensajes=mensajes;
+            client.scrollBarra=scrollBarra;
+            client.mensajeChat=mensajeChat;
+
+
         }
 
     }
 
     public void appendisplay(String msg) {
-        while (!preparado) {
-            if(loaded)
-                preparado = true;
-        }
 
-        if (loaded) {
-            preparado = true;
 
+        Platform.runLater(new Runnable(){
+            @Override public void run() {
+
+                zonaMensajes =client.zonaMensajes;
+                mensajes=client.mensajes ;
+                scrollBarra=client.scrollBarra ;
+                mensajeChat=client.mensajeChat ;
             TextArea nuevoMensaje = new TextArea(msg);
             nuevoMensaje.setPrefWidth(255);
             nuevoMensaje.setPrefHeight(30);
@@ -155,16 +165,19 @@ public class ChatController implements Initializable {
 
             mensajes.add(0, nuevoMensaje); //Es el mensaje más reciente
 
-            zonaMensajes.getChildren().clear(); //Borramos all para actualizar
 
-            for (TextArea mensaje : mensajes) {
-                mensaje.setTranslateY(y); //Desplazamos los mensajes hacia arriba
-                zonaMensajes.getChildren().add(mensaje);
-                y -= 60;
+                zonaMensajes.getChildren().clear(); //Borramos all para actualizar
+
+                for (TextArea mensaje : mensajes) {
+                    mensaje.setTranslateY(y); //Desplazamos los mensajes hacia arriba
+                    zonaMensajes.getChildren().add(mensaje);
+                    y -= 60;
+                }
+
+                mensajeChat.clear();
             }
 
-            mensajeChat.clear();
-        }
+        });
 
     }
 
@@ -231,7 +244,5 @@ public class ChatController implements Initializable {
 
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        loaded = true;
-    }
+    public void initialize(URL location, ResourceBundle resources) { loaded = true;}
 }

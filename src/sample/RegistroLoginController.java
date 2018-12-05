@@ -33,6 +33,9 @@ public class RegistroLoginController {
     public TextField nickname;
     public static Client client;
 
+
+
+
     public void login(javafx.event.ActionEvent actionEvent) throws IOException {
         Parent loginParent = FXMLLoader.load(getClass().getResource("login.fxml"));
         Scene loginScene = new Scene(loginParent, 600, 400);

@@ -7,6 +7,10 @@ import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
 import java.nio.file.*;
+
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.AnchorPane;
 import sample.ChatMessage;
 
 /* The Client that can be run both as a console or a GUI */
@@ -28,6 +32,11 @@ public class Client {
     private String server, username;
     private int port;
 
+
+    public static AnchorPane zonaMensajes;
+    public static ArrayList<TextArea> mensajes = new ArrayList<TextArea>();
+    public static ScrollBar scrollBarra;
+    public static TextArea mensajeChat;
     /*
      *  Constructor called by console mode
      *  server: the server address
@@ -51,6 +60,9 @@ public class Client {
         // save if we are in GUI mode or not
         //cc = null;
         this.cc = cc;
+
+
+
     }
 
     /*
@@ -92,6 +104,7 @@ public class Client {
             disconnect();
             return false;
         }
+
         // success we inform the caller that it worked
         return true;
     }
