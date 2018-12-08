@@ -1,5 +1,6 @@
 package sample;
 //hola
+
 import java.net.*;
 import java.io.*;
 import java.util.*;
@@ -8,9 +9,13 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.*;
 import java.nio.file.*;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import sample.ChatMessage;
 
 /* The Client that can be run both as a console or a GUI */
@@ -33,10 +38,16 @@ public class Client {
     private int port;
 
 
-    public static AnchorPane zonaMensajes;
+    public static FlowPane zonaMensajes;
     public static ArrayList<TextArea> mensajes = new ArrayList<TextArea>();
-    public static ScrollBar scrollBarra;
+    public static ScrollPane scrollBarra;
     public static TextArea mensajeChat;
+    public static Button enviar;
+    public static Button archivo;
+    public static String comprobarArchivo;
+
+
+
     /*
      *  Constructor called by console mode
      *  server: the server address
@@ -62,7 +73,10 @@ public class Client {
         this.cc = cc;
 
 
+    }
 
+    public String getUsername() {
+        return username;
     }
 
     /*
@@ -117,7 +131,7 @@ public class Client {
             System.out.println(msg);      // println in console mode
         else
             cc.appendisplay(msg);        // append to the ClientGUI JTextArea (or whatever)
-    //cc.append(msg + "\n");
+        //cc.append(msg + "\n");
     }
 
     /*
@@ -227,30 +241,28 @@ public class Client {
             // message WhoIsIn
             else if (msg.equalsIgnoreCase("WHOISIN")) {
                 client.sendMessage(new ChatMessage(ChatMessage.WHOISIN, ""));
-            }
-            else if (msg.contains("FILE")) {
-                String msg2=msg.substring(6,msg.length());
-                msg2=msg2.substring(msg2.lastIndexOf("\\"));
-                msg2=encriptarMensaje(msg2);
-                ChatMessage cosa=new ChatMessage(ChatMessage.FILE, msg2);
-                String archivo=msg.substring(6,msg.length());
-                File f = new File(archivo);
-                byte[] content=null;
-                try{
+            } else if (msg.contains("FILE")) {
+                String path = msg.substring(6, msg.length());
+                String nombreArchivo = path.substring(path.lastIndexOf("\\"));
+                nombreArchivo = encriptarMensaje(nombreArchivo);
+                ChatMessage mensaje = new ChatMessage(ChatMessage.FILE, nombreArchivo);
+
+                File f = new File(path);
+                byte[] content = null;
+                try {
                     content = Files.readAllBytes(f.toPath());
-                }
-                catch (IOException ex) {
+                } catch (IOException ex) {
                     System.out.println("Problema con el archivo");
                 }
-                if(claveAES!=null){
-                    content=encriptarMensajeBytes(content);
+                if (claveAES != null) {
+                    content = encriptarMensajeBytes(content);
                 }
-                cosa.setContenido(content);
-                client.sendMessage(cosa);
-            }
-            else {                // default to ordinary message
-                if(claveAES!=null){
-                    msg = encriptarMensaje(userName+": "+msg);}
+                mensaje.setContenido(content);
+                client.sendMessage(mensaje);
+            } else {                // default to ordinary message
+                if (claveAES != null) {
+                    msg = encriptarMensaje(userName + ": " + msg);
+                }
                 client.sendMessage(new ChatMessage(ChatMessage.CIPHERMESSAGE, msg));
             }
         }
@@ -272,64 +284,74 @@ public class Client {
 
                     ChatMessage aux = (ChatMessage) sInput.readObject();
 
-                    if(aux.getType()==5){
-                        if(claveAES!=null){
-                            String msg=aux.getMessage();
-                            msg=desencriptarMensaje(msg);
+                    if (aux.getType() == 5) {
+                        if (claveAES != null) {
+                            String msg = aux.getMessage();
+                            msg = desencriptarMensaje(msg);
                             System.out.println(msg);
+                            String[] quien = msg.split(":", 2);
+                            if (quien[0].equalsIgnoreCase(username)) {
+                                msg = username + ": " + quien[1];
+                            }
                             display(msg);
                         }
                     }
-                    if(aux.getType()==1 || aux.getType()==4){
-                        String msg=aux.getMessage();
+                    if (aux.getType() == 1 || aux.getType() == 4) {
+                        String msg = aux.getMessage();
                         // if console mode print the message and add back the prompt
                         if (cc != null) {
-                            if(!msg.contains("~0~") && !msg.contains("~1~")){
+                            if (!msg.contains("~0~") && !msg.contains("~1~")) {
                                 System.out.println(msg);
                             }
-                            if(aux.getType()!=4){
+                            if (aux.getType() != 4) {
                                 msg = msg.substring(9, msg.length() - 1);
                             }
                             if (msg.equalsIgnoreCase("Eres el primero que chupi")) {
                                 System.out.println("Soy el primero viva");
                                 generarAES();
+                                cc.activarBoton();
 
                             }
-                            if (msg.equalsIgnoreCase("Vas a mandarme tu clave publica")){
-                                sOutput.writeObject(new ChatMessage(ChatMessage.KEY,clavePublica));
+                            if (msg.equalsIgnoreCase("Vas a mandarme tu clave publica")) {
+                                sOutput.writeObject(new ChatMessage(ChatMessage.KEY, clavePublica));
                             }
-                            if (msg.contains("~0~")){
+                            if (msg.contains("~0~")) {
                                 System.out.println("Tengo la clave publica de otro usuario");
                                 System.out.println("Encripto la clave AES con ella y la mando");
                                 //Recibo la clavepublica de B desde el servidor, y con ella encripto mi AES, devolviendo un String
-                                String enviar=encriptarK(aux.getKey());
-                                sOutput.writeObject(new ChatMessage(ChatMessage.MESSAGE,  "~1~"+enviar));
+                                String enviar = encriptarK(aux.getKey());
+                                sOutput.writeObject(new ChatMessage(ChatMessage.MESSAGE, "~1~" + enviar));
                             }
-                            if (msg.contains("~1~")){
+                            if (msg.contains("~1~")) {
                                 System.out.println("Tengo la clave AES encriptada");
                                 System.out.println("La desencripto con mi clave privada");
-                                String hecho=msg.substring(3);
+                                String hecho = msg.substring(3);
                                 System.out.println(hecho);
-                                claveAES=desencriptarK(hecho);
+                                claveAES = desencriptarK(hecho);
                                 System.out.println("Ya tengo la clave AES");
+                                cc.activarBoton();
                             }
-                            if(!msg.equalsIgnoreCase("Eres el primero que chupi")){
+                            if (!msg.equalsIgnoreCase("Eres el primero que chupi")) {
                                 System.out.print("> ");
                             }
                         } else {
                             cc.append(msg);
                         }
                     }
-                    if(aux.getType()==3){
+                    if (aux.getType() == 3) {
 
                         byte[] otro = aux.getContenido();
-                        otro=desencriptarMensajeBytes(otro);
+                        otro = desencriptarMensajeBytes(otro);
                         System.out.println("Tengo el archivo");
 
-                        String nombre=desencriptarMensaje(aux.getMessage());
+                        String nombre = desencriptarMensaje(aux.getMessage());
+                        String[] nombreAux = nombre.split(":", 2);
 
-                        File f = new File("C:\\Users\\Irene\\Downloads\\LorikeetFiles"+nombre);
+                        File f = new File("C:\\LorikeetFiles" + nombreAux[1]);
                         Files.write(f.toPath(), otro);
+                        String nArchivo = nombreAux[1].substring(1, nombreAux[1].length());
+                        comprobarArchivo = nArchivo;
+                        cc.appendisplay(nombreAux[0] + ": " + nArchivo);
 
                     }
                 } catch (IOException e) {
@@ -396,7 +418,7 @@ public class Client {
 
 
     public SecretKey desencriptarK(String aesCifrado) {
-        SecretKey claveAESprueba=null;
+        SecretKey claveAESprueba = null;
         try {
             byte[] aesCifradoBytes = Base64.getDecoder().decode(aesCifrado); //La clave en bytes
 
@@ -503,6 +525,9 @@ public class Client {
 
     public static SecretKey getClaveAES() {
         return claveAES;
+    }
+    public static String getComprobarArchivo() {
+        return comprobarArchivo;
     }
 
     public static void setClaveAES(SecretKey claveAES) {

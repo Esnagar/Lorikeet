@@ -1,8 +1,10 @@
 package sample;
 //hola
+
 import java.io.*;
 import java.security.*;
 import java.nio.file.*;
+
 /*
  * This class defines the different type of messages that will be exchanged between the
  * Clients and the Server.
@@ -18,28 +20,39 @@ public class ChatMessage implements Serializable {
 	// MESSAGE an ordinary message
 	// LOGOUT to disconnect from the Server
 	//FILE contains a FILE
-	static final int WHOISIN = 0, MESSAGE = 1, LOGOUT = 2, FILE = 3, KEY = 4, CIPHERMESSAGE = 5;
+	static final int WHOISIN = 0, MESSAGE = 1, LOGOUT = 2, FILE = 3, KEY = 4, CIPHERMESSAGE = 5,LOGIN = 6, REGISTRO = 7;
 	private int type;
 	private String message;
 	private byte[] contenido;
 	private PublicKey clave;
+	//login y registro
+	private String nickname;
+	private String pass;
 
 	// constructor
-	ChatMessage(int type, PublicKey clave){
-		if(type==4){
+	ChatMessage(int type, PublicKey clave) {
+		if (type == 4) {
 			this.type = type;
 			this.message = "~0~";
-			this.clave=clave;
+			this.clave = clave;
 		}
 	}
+
 	ChatMessage(int type, String message) {
-		if(type==3){ //FILE: nombreejemplo
-			this.message=message;
+		if (type == 3) { //FILE: nombreejemplo
+			this.message = message;
 			this.type = type;
-		}
-		else{
+		} else {
 			this.type = type;
 			this.message = message;
+		}
+	}
+
+	ChatMessage(int type, String nickname, String pass){
+		if(type==6 || type==7){
+			this.type = type;
+			this.nickname = nickname;
+			this.pass=pass;
 		}
 	}
 
@@ -47,16 +60,26 @@ public class ChatMessage implements Serializable {
 	int getType() {
 		return type;
 	}
-	public void setContenido(byte[] setear){
-		this.contenido=setear;
+
+	public void setContenido(byte[] setear) {
+		this.contenido = setear;
 	}
+	String getNickname() {
+		return nickname;
+	}
+	String getPass() {
+		return pass;
+	}
+
 	String getMessage() {
 		return message;
 	}
-	byte[] getContenido(){
+
+	byte[] getContenido() {
 		return contenido;
 	}
-	PublicKey getKey(){
+
+	PublicKey getKey() {
 		return clave;
 	}
 }

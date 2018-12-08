@@ -13,38 +13,41 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.RegistroLoginController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.RegistroController">
     <children>
-        <TextField layoutX="411.0" layoutY="116.0" prefHeight="31.0" prefWidth="159.0">
-         <cursor>
-            <Cursor fx:constant="TEXT" />
-         </cursor></TextField>
+        <TextField fx:id="nombre" layoutX="411.0" layoutY="116.0" prefHeight="31.0" prefWidth="159.0">
+            <cursor>
+                <Cursor fx:constant="TEXT" />
+            </cursor></TextField>
         <Label layoutX="321.0" layoutY="121.0" text="Nickname" />
         <Label layoutX="321.0" layoutY="174.0" text="Contraseña" />
-        <Button fx:id="registro" layoutX="397.0" layoutY="301.0" mnemonicParsing="false" onAction="#chat" text="Registrarse" />
-        <Hyperlink fx:id="login" layoutX="399.0" layoutY="339.0" onAction="#login" text="Inicia sesión" />
+        <Button fx:id="registro" layoutX="397.0" layoutY="301.0" mnemonicParsing="false" onAction="#registrarse" text="Registrarse" />
+        <Hyperlink fx:id="login" layoutX="399.0" layoutY="339.0" onAction="#loginn" text="Inicia sesión" />
         <Separator layoutX="274.0" orientation="VERTICAL" prefHeight="400.0" prefWidth="35.0" />
-        <Button layoutX="68.0" layoutY="307.0" mnemonicParsing="false" text="Ayuda" />
-        <Button layoutX="168.0" layoutY="308.0" mnemonicParsing="false" text="Acerca" />
+        <Button layoutX="68.0" layoutY="307.0" mnemonicParsing="false" onAction="#ayuda" text="Ayuda" />
+        <Button fx:id="acerca" layoutX="168.0" layoutY="308.0" mnemonicParsing="false" onAction="#acerca" text="Acerca" />
         <StackPane layoutX="82.0" layoutY="-159.0" prefHeight="150.0" prefWidth="200.0" />
         <Label layoutX="354.0" layoutY="48.0" text="Crea tu cuenta">
             <font>
                 <Font size="28.0" />
             </font>
         </Label>
-        <PasswordField layoutX="411.0" layoutY="225.0" prefHeight="31.0" prefWidth="159.0">
-         <cursor>
-            <Cursor fx:constant="TEXT" />
-         </cursor></PasswordField>
+        <PasswordField fx:id="pass1" layoutX="411.0" layoutY="225.0" prefHeight="31.0" prefWidth="159.0">
+            <cursor>
+                <Cursor fx:constant="TEXT" />
+            </cursor></PasswordField>
         <Label layoutX="321.0" layoutY="221.0" prefHeight="40.0" prefWidth="79.0" text="Confirmar &#10;contraseña" />
-      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="75.0" layoutY="109.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../LorikeetVector.png" />
-         </image>
-      </ImageView>
-      <PasswordField layoutX="411.0" layoutY="169.0" prefHeight="31.0" prefWidth="159.0">
-         <cursor>
-            <Cursor fx:constant="TEXT" />
-         </cursor></PasswordField>
+        <ImageView fx:id="pajaro" fitHeight="150.0" fitWidth="200.0" layoutX="75.0" layoutY="109.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../LorikeetVector.png" />
+            </image>
+        </ImageView>
+        <PasswordField fx:id="pass2" layoutX="411.0" layoutY="169.0" prefHeight="31.0" prefWidth="159.0">
+            <cursor>
+                <Cursor fx:constant="TEXT" />
+            </cursor></PasswordField>
+      <Label fx:id="resultado" layoutX="390.0" layoutY="275.0" maxHeight="1.7976931348623157E308" opacity="0.0" text="Registro exitoso!" textAlignment="CENTER" />
+      <Label fx:id="acercatexto" layoutX="43.0" layoutY="94.0" opacity="0.0" prefHeight="171.0" prefWidth="209.0"  onMouseClicked="#repajaro" text="Una aplicación por:   &#10;Esther Navarro García &quot;Esther London&quot;&#10;José Vicente Tomás Pérez &quot;Mediotaku&quot; &#10;Irene Clemente Aracil &quot;Irene Cats&quot;" textAlignment="CENTER" wrapText="true" />
+      <Label fx:id="ayudatexto" layoutX="51.0" layoutY="66.0" opacity="0.0" prefHeight="223.0" prefWidth="200.0"  onMouseClicked="#repajaro" text="Lorikeet es una aplicación de chat&#10;cifrado en línea para escritorio. &#10;&#10;Crea un usuario nuevo utilizando &#10;el formulario de registro y entra&#10;a la sala introduciendo tu usuario&#10;en el formulario de iniciar sesión.&#10;&#10;Puedes intercambiar mensajes&#10;y cualquier tipo de archivo de forma&#10;segura. Tus datos de usuario también&#10;son almacenados bajo encriptación. " textAlignment="CENTER" wrapText="true" />
     </children>
 </Pane>
