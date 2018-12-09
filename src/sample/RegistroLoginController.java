@@ -53,6 +53,10 @@ public class RegistroLoginController implements Initializable{
     @FXML
     private Label acercatexto;
     @FXML
+    private Label serverlabel;
+    @FXML
+    private TextField serverip;
+    @FXML
     private Label ayudatexto;
     @FXML
     private javafx.scene.image.ImageView pajaro;
@@ -67,6 +71,7 @@ public class RegistroLoginController implements Initializable{
     private int defaultPort;
     private String defaultHost;
     public static String user;
+    public static String ip;
 
     public static javafx.event.ActionEvent actionEventaux;
 
@@ -98,7 +103,7 @@ public class RegistroLoginController implements Initializable{
         window.show();
 
         RegistroController cg = new RegistroController("localhost", 1501,"");
-        Main.clientlog = new RegistroLogin("localhost", 1501,"" , cg);
+        Main.clientlog = new RegistroLogin(RegistroController.ip, 1501,"" , cg);
         Main.clientlog.start();
         cg.asignarCliente();
 
@@ -116,7 +121,7 @@ public class RegistroLoginController implements Initializable{
             window.show();
 
             ChatController cc = new ChatController("localhost", 1500, user);
-            client = new Client("localhost", 1500, user, cc);
+            client = new Client(ip, 1500, user, cc);
             //client.start();
             cc.asignarCliente();
 
@@ -147,9 +152,17 @@ public class RegistroLoginController implements Initializable{
     public void iniciar(javafx.event.ActionEvent actionEvent) throws IOException {
         if (!nickname.getText().isEmpty() && !passlog.getText().isEmpty()) {
             user=nickname.getText();
+            ip=RegistroController.ip;
             append("LOGIN: "+nickname.getText()+" "+passlog.getText());
         }
         actionEventaux=actionEvent;
+    }
+
+    public void serverpass(){
+        asignarCliente();
+        serverlabel.setOpacity(1.0);
+        serverip.setOpacity(1.0);
+        serverip.setDisable(false);
     }
 
     public void acerca(){

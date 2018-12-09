@@ -41,7 +41,11 @@ public class RegistroController implements Initializable {
     @FXML
     private Button acerca;
     @FXML
+    private Button confirmar;
+    @FXML
     private TextField nombre;
+    @FXML
+    private TextField serverfield;
     @FXML
     private PasswordField pass1,pass2;
     @FXML
@@ -51,11 +55,15 @@ public class RegistroController implements Initializable {
     @FXML
     private Label ayudatexto;
     @FXML
+    private Label serverlabel;
+    @FXML
     private Hyperlink login;
+    @FXML
+    private Hyperlink serverlink;
     @FXML
     private javafx.scene.image.ImageView pajaro;
 
-
+    public static String ip;
 
     public RegistroController() {
         super();
@@ -76,12 +84,21 @@ public class RegistroController implements Initializable {
         window.show();
 
         RegistroLoginController ct = new RegistroLoginController("localhost", 1501,"");
+        ct.ip=ip;
         clientlogin = new RegistroLogin("localhost", 1501,"" , ct);
+        if(serverfield.getText().isEmpty()){
+            ip="localhost";
+        }
+        clientlogin.setServer(ip);
         clientlogin.start();
         ct.asignarCliente();
 
     }
     public void registrarse(ActionEvent actionEvent) throws IOException {
+        if(serverfield.getText().isEmpty()){
+            ip="localhost";
+        }
+        Main.clientlog.setServer(ip);
         Main.clientlog.start();
         if (!nombre.getText().isEmpty() && !pass1.getText().isEmpty() && !pass2.getText().isEmpty()) {
             append("REGISTRO: "+nombre.getText()+" "+pass1.getText()+" "+pass2.getText());
@@ -161,6 +178,42 @@ public class RegistroController implements Initializable {
         pajaro.setOpacity(0);
         ayudatexto.setOpacity(0);
         acercatexto.setOpacity(1.0);
+    }
+    public void serverpass(){
+        asignarCliente();
+        serverlabel.setOpacity(1.0);
+        serverfield.setOpacity(1.0);
+        confirmar.setOpacity(1.0);
+        registro.setOpacity(0);
+        resultado.setOpacity(0);
+        login.setOpacity(0);
+        serverlink.setOpacity(0);
+        registro.setDisable(true);
+        login.setDisable(true);
+        serverlink.setDisable(true);
+        serverfield.setDisable(false);
+        confirmar.setDisable(false);
+    }
+    public void confirmar(){
+        serverlabel.setOpacity(0);
+        serverfield.setOpacity(0);
+        confirmar.setOpacity(0);
+        registro.setOpacity(1);
+        login.setOpacity(1);
+        serverlink.setOpacity(1);
+        registro.setDisable(false);
+        login.setDisable(false);
+        serverlink.setDisable(false);
+        serverfield.setDisable(true);
+        confirmar.setDisable(true);
+
+        if(serverfield.getText().isEmpty()){
+            ip="localhost";
+        }
+        else{
+            ip=serverfield.getText();
+        }
+
     }
     public void ayuda(){
         asignarCliente();

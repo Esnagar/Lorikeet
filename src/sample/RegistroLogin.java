@@ -328,6 +328,9 @@ public class RegistroLogin {
         }
         return generatedPassword;
     }
+    public void setServer(String server){
+        this.server=server;
+    }
 
     public static byte[] getSalt() throws NoSuchAlgorithmException{
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");

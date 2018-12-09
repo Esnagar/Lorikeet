@@ -1,0 +1,27 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="LoriServer">
+    <output-path>$PROJECT_DIR$/out/artifacts/LoriServer</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="sample.ServerMain" />
+        <option name="description" value="Snipppet with servers used in Lorikeet backend." />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="icons">
+          <JavaFxApplicationIcons>
+            <option name="linuxIcon" value="$PROJECT_DIR$/src/LorikeetVector.png" />
+            <option name="windowsIcon" value="$PROJECT_DIR$/src/path28.ico" />
+          </JavaFxApplicationIcons>
+        </option>
+        <option name="nativeBundle" value="all" />
+        <option name="title" value="LoriServer" />
+        <option name="vendor" value="Lorikeet,inc" />
+        <option name="version" value="1.0" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="JavaFxApplication.jar">
+        <element id="module-output" name="JavaFxApplication" />
+      </element>
+    </root>
+  </artifact>
+</component>
